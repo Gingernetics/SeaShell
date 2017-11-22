@@ -13,22 +13,29 @@ char ** parse_args( char * line ){
 	//char * string is only used to test the size of strings
 	char * string;
 
-	char ** arguments = calloc(ARGLIMIT, sizeof(string));
+	char ** arguments = calloc(20, 8);
 	char * element = malloc(8);
 
 	int i = 0;
-
+	/*
+	printf("%s\n", strsep(&line, " "));
+	printf("%s\n", strsep(&line, " "));
+*/
+/*
 	while((element = strsep(&line, " ")) != NULL){
 		arguments[i++] = element;
+		printf("%s\n", element);
 	}
-
-	arguments[i] = NULL;
+*/
+	//arguments[i] = NULL;
 	return arguments;
 }
 
-int main(int argc, char *argv[]){
+int main(){
 
-	char line[100] = "ls -a -l";
+	char line[100];
+	scanf("%s", line);
+	printf("%s\n", line);
 	char **result = parse_args(line);
 
 	int parent = fork();
@@ -36,7 +43,6 @@ int main(int argc, char *argv[]){
 	if(parent){
 		int status;
 		wait(&status);
-		printf("Parent\n");
 	}
 
 	if(!parent){
@@ -44,6 +50,5 @@ int main(int argc, char *argv[]){
 		execvp(result[0], result);
 	}
 
-	printf("Done\n");
 	return 0;
 }
