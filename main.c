@@ -26,7 +26,7 @@ static void sig_handler(int signo){
 
 
 //Given a string, returns an output usable by execvp()
-char ** parse_args( char * line ){
+char ** parse_args( char * line, char * delimiter ){
 
 	line = remove_char( line, '\n');
 
@@ -34,7 +34,7 @@ char ** parse_args( char * line ){
 	char * element = malloc(8);
 
 	int i = 0;
-	while((element = strsep(&line, " ")) != NULL){
+	while((element = strsep(&line, delimiter)) != NULL){
 		arguments[i++] = element;
 	}
 	arguments[i] = NULL;
@@ -65,9 +65,8 @@ void record_in_log(char * line){
 }
 
 
-char ** split_line(char * line, char * delimiter){
+char ** split_line(char ** token, char * line, char * delimiter){
 	int i, j = 0;
-	char *token[1024];
    	token[i] = strtok(line, delimiter);
 
     	while (token[i] != NULL) {
@@ -95,13 +94,13 @@ int main(){
 		fgets(line, sizeof(line), stdin);
 		record_in_log(line);
 
-
+/*
 		//Splits input by ';'
 		int i;
 		char *token[1024];
 		printf("%s\n", line);
-		token = split_line(line, ";");
-
+		token = split_line(token, line, ";");
+*/
 		// Special Conditions /
 
 		//Exit condition
@@ -113,7 +112,7 @@ int main(){
 		//if (strstr(line, "cd ") == 0)
 
 		//Strsep by ;, then while loop
-		char **result = parse_args(line);
+		char **result = parse_args(line, " ");
 
 		int parent = fork();
 
