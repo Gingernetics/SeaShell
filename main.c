@@ -64,6 +64,23 @@ void record_in_log(char * line){
 	close(fd);
 }
 
+
+char ** split_line(char * line, char * delimiter){
+	int i, j = 0;
+	char *token[1024];
+   	token[i] = strtok(line, delimiter);
+
+    	while (token[i] != NULL) {
+        	i++;
+        	token[i] = strtok(NULL, delimiter);
+    	}
+
+    	for (j=0; j<=i-1; j++) {
+        	printf("%s\n", token[j]);
+    	}
+	return token;
+}
+
 int main(){
 
 	//Output for Interrupt
@@ -79,14 +96,21 @@ int main(){
 		record_in_log(line);
 
 
-		/* Special Conditions */
+		//Splits input by ';'
+		int i;
+		char *token[1024];
+		printf("%s\n", line);
+		token = split_line(line, ";");
+
+		// Special Conditions /
 
 		//Exit condition
 		if (strcmp(line, "exit\n") == 0)
 			exit(0);
 
 		//Cd condition
-
+		//Possibility that a command ending in cd triggers
+		//if (strstr(line, "cd ") == 0)
 
 		//Strsep by ;, then while loop
 		char **result = parse_args(line);
@@ -103,5 +127,6 @@ int main(){
 			execvp(result[0], result);
 		}
 	}
+
 	return 0;
 }
