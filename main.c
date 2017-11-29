@@ -37,7 +37,7 @@ char ** parse_args( char * line, char * delimiter ){
 	while((element = strsep(&line, delimiter)) != NULL){
 		arguments[i++] = element;
 	}
-	arguments[i] = NULL;
+	arguments[i] = NULL; 
 
 	return arguments;
 }
@@ -65,20 +65,6 @@ void record_in_log(char * line){
 }
 
 
-char ** split_line(char ** token, char * line, char * delimiter){
-	int i, j = 0;
-   	token[i] = strtok(line, delimiter);
-
-    	while (token[i] != NULL) {
-        	i++;
-        	token[i] = strtok(NULL, delimiter);
-    	}
-
-    	for (j=0; j<=i-1; j++) {
-        	printf("%s\n", token[j]);
-    	}
-	return token;
-}
 
 int main(){
 
@@ -86,44 +72,50 @@ int main(){
 	signal(SIGINT, sig_handler);
 
 
-	char line[1024];
+	char input[1024];
 
 	while(WAITING){
 
 		//Input from terminal, halts loop
-		fgets(line, sizeof(line), stdin);
-		record_in_log(line);
+		fgets(input, sizeof(input), stdin);
+		record_in_log(input);
 
-/*
+
 		//Splits input by ';'
-		int i;
-		char *token[1024];
-		printf("%s\n", line);
-		token = split_line(token, line, ";");
-*/
-		// Special Conditions /
+		char **commands = parse_args(input, ";");
 
-		//Exit condition
-		if (strcmp(line, "exit\n") == 0)
-			exit(0);
 
-		//Cd condition
-		//Possibility that a command ending in cd triggers
-		//if (strstr(line, "cd ") == 0)
+		int i = 0;
+		char *line;
+		//Runs every command provided
+		while((line = commands[i++]) != NULL){
 
-		//Strsep by ;, then while loop
-		char **result = parse_args(line, " ");
+			/* Special Conditions */
 
-		int parent = fork();
+			//Exit condition
+			if (strcmp(line, "exit\n") == 0)
+				exit(0);
 
-		if(parent){
-			int status;
-			wait(&status);
-		}
+			char **command = parse_args(line, " ");
 
-		if(!parent){
-			//execvp automatically releases memory
-			execvp(result[0], result);
+
+			//Cd condition
+			//Possibility that a command ending in cd triggers
+			//if (strstr(line, "cd ") == 0)
+
+			//Strsep by ;, then while loop
+
+			int parent = fork();
+
+			if(parent){
+				int status;
+				wait(&status);
+			}
+
+			if(!parent){
+				//execvp automatically releases memory
+				execvp(command[0], command);
+			}
 		}
 	}
 
