@@ -65,18 +65,32 @@ void record_in_log(char * line){
 }
 
 
+char * get_pwd(){
+	int f = fork();
+	if (!f){
+
+
+
+	}
+
+}
+
+
 
 int main(){
 
 	//Output for Interrupt
 	signal(SIGINT, sig_handler);
 
+	char * current_dir;
 
 	char input[1024];
 
 	while(WAITING){
 
 		//Input from terminal, halts loop
+		current_dir = "Happy";//get_pwd();
+		printf("%s:> ", current_dir);
 		fgets(input, sizeof(input), stdin);
 		record_in_log(input);
 
@@ -101,9 +115,22 @@ int main(){
 
 			//Cd condition
 			//Possibility that a command ending in cd triggers
-			//if (strstr(line, "cd ") == 0)
+			if (strcmp(command[0], "cd") == 0){
+				char *directory = command[1];
+				int ret;
+
+				ret = chdir(directory);
+			}
 
 			//Strsep by ;, then while loop
+
+
+			//Redirection (< or >) condition
+
+
+			//Pipe condition
+
+			
 
 			int parent = fork();
 
