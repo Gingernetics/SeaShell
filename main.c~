@@ -21,14 +21,15 @@ int main(){
 	char input[1024];
 
 	while(WAITING){
+        printf("0");
 		//Input from terminal, halts loop
 		fgets(input, sizeof(input), stdin);
 		record_in_log(input);
 
-
+        printf("1");
 		//Splits input by ';'
 		char **commands = parse_args(input, ";");
-
+        printf("2");
 
 		int i = 0;
 		char *line;
