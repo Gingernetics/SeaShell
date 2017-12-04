@@ -6,7 +6,7 @@
 #include <sys/wait.h>
 #include <signal.h>
 
-
 char ** parse_args( char * , char * );
+char * get_pwd();
+void run_command(char ** );
 char * remove_char( char * , char );
-void record_in_log(char * );

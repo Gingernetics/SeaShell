@@ -1,26 +1,25 @@
 #include "seashell.h"
 
-//Largest amount of arguments passed as input
-const int ARGLIMIT = 20;
-
-//Given a string, returns an output usable by execvp()
+//Given a string, returns an array of strings separated by delimiter
 char ** parse_args( char * line, char * delimiter ){
 
 	line = remove_char( line, '\n');
 
-	char ** arguments = calloc(ARGLIMIT, 8);
+	char ** arguments = calloc(20, 8);
 	char * element = malloc(8);
 
 	int i = 0;
 	while((element = strsep(&line, delimiter)) != NULL){
-		arguments[i++] = element;
+	    if(strcmp(element, "") != 0){
+		    arguments[i++] = element;
+		}
 	}
 	arguments[i] = NULL; 
 
 	return arguments;
 }
 
-
+//Removes unwanted characters from a string array
 char * remove_char( char * line, char bad_char){
 	char *src, *dest;
 
@@ -36,8 +35,32 @@ char * remove_char( char * line, char bad_char){
 	return line;
 }
 
-void record_in_log(char * line){
-	int fd = open("history.log", O_APPEND | O_WRONLY, 0644);
-	write(fd, line, (sizeof(line) - 1));
-	close(fd);
+//Finds the pwd of the shell
+char * get_pwd(){
+    long size;
+    char *buf;
+    char *pwd;
+
+    size = pathconf(".", _PC_PATH_MAX);
+
+    if ((buf = (char *)malloc((size_t)size)) != NULL)
+        pwd = getcwd(buf, (size_t)size);
+        
+    return pwd;
+}
+
+
+void run_command(char ** command){
+   
+			int parent = fork();
+
+			if(parent){
+				int status;
+				wait(&status);
+			}
+
+			if(!parent){
+				//execvp automatically releases memory
+				execvp(command[0], command);	
+			}
 }
